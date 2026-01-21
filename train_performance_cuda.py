@@ -129,38 +129,33 @@ def train_epoch(
         
         optimizer.zero_grad()
         
-        # Encode audio to codes
-        with torch.no_grad():
-            codes, _ = model.compression_model.encode(audio)
-        
-        # Prepare conditioning
-        attributes, _ = model._prepare_tokens_and_attributes(conditions, None)
-        
-        # Forward pass through LM
-        # MusicGen uses internal loss computation
-        # We need to access the LM's forward with teacher forcing
-        
-        # Flatten codes for LM input
-        B, K, T = codes.shape
-        
-        # Create input sequence (shift right)
-        input_codes = codes[:, :, :-1]
-        target_codes = codes[:, :, 1:]
-        
-        # Get condition tensors
-        condition_tensors = model._prepare_condition_tensors(attributes)
-        
-        # Forward LM
-        logits = model.lm(input_codes, condition_tensors)
-        
-        # Compute loss (cross-entropy over codebook predictions)
-        # logits shape: (B, K, T, vocab)
-        # target shape: (B, K, T)
-        loss = F.cross_entropy(
-            logits.view(-1, logits.size(-1)),
-            target_codes.reshape(-1),
-            ignore_index=-100
-        )
+        with torch.autocast(device_type="cuda"):
+            # Encode audio to codes
+            with torch.no_grad():
+                codes, _ = model.compression_model.encode(audio)
+            
+            # Prepare conditioning
+            attributes, _ = model._prepare_tokens_and_attributes(conditions, None)
+            
+            # Flatten codes for LM input
+            B, K, T = codes.shape
+            
+            # Create input sequence (shift right)
+            input_codes = codes[:, :, :-1]
+            target_codes = codes[:, :, 1:]
+            
+            # Get condition tensors
+            condition_tensors = model.lm.condition_provider(model.lm.condition_provider.tokenize(attributes))
+            
+            # Forward LM
+            logits = model.lm(input_codes, conditions=[], condition_tensors=condition_tensors)
+            
+            # Compute loss (cross-entropy over codebook predictions)
+            loss = F.cross_entropy(
+                logits.view(-1, logits.size(-1)),
+                target_codes.reshape(-1),
+                ignore_index=-100
+            )
         
         # Backward
         loss.backward()

@@ -26,7 +26,7 @@ fi
 # 2. Setup Virtual Environment
 if [ ! -d "venv" ]; then
     echo "📦 Creating virtual environment..."
-    python3 -m venv venv
+    python3.11 -m venv venv
 fi
 
 echo "🔌 Activating environment..."
@@ -52,7 +52,11 @@ python scripts/prepare_training_data.py
 echo "🔥 STARTING TRAINING LOOP..."
 echo "   Output: checkpoints/lora_performance"
 # Use arguments if passed to script, else default
-python train_performance_cuda.py "${@:---epochs 3}"
+if [ $# -eq 0 ]; then
+    python train_performance_cuda.py --epochs 3
+else
+    python train_performance_cuda.py "$@"
+fi
 
 # 6. Export
 echo "📦 Exporting trained model..."
