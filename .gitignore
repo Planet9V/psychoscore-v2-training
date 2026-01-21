@@ -1,0 +1,47 @@
+# Ignore virtual environments
+venv/
+.venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Checkpoints and models (use Git LFS for trained models)
+checkpoints/
+*.pt
+*.bin
+*.safetensors
+
+# Data files (too large for git)
+data/
+*.jsonl
+*.json
+!config/*.yaml
+
+# Logs
+logs/
+*.log
+tensorboard/
+wandb/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Build
+build/
+dist/
+*.egg-info/

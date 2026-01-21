@@ -1,0 +1,30 @@
+# CUDA Training Dependencies for PSYCHOSCORE v2
+# Tested on Python 3.10-3.12 with CUDA 11.8+
+
+# PyTorch with CUDA (install separately with correct CUDA version)
+# pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+
+# Core ML
+transformers>=4.35.0
+peft>=0.6.0
+accelerate>=0.24.0
+datasets>=2.14.0
+
+# Audio Processing
+audiocraft>=1.0.0
+torchaudio>=2.0.0
+
+# CLAP for alignment
+laion-clap>=1.1.0
+
+# Utilities
+numpy>=1.24.0
+tqdm>=4.65.0
+pyyaml>=6.0
+tensorboard>=2.14.0
+
+# xformers - Critical for MusicGen training
+xformers>=0.0.22
+
+# Optional: Weights & Biases logging
+wandb>=0.15.0
